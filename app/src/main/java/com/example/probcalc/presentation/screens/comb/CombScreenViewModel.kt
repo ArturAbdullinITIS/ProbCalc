@@ -37,7 +37,6 @@ class CombScreenViewModel @Inject constructor(
                 }
             }
             CombScreenCommands.Calculate -> {
-                val currentState = _state.value
 
                 _state.update { state ->
                     state.copy(
@@ -83,5 +82,6 @@ data class CombScreenState(
     val k: String = "",
     val type: CalcType = CalcType.PLACEMENT,
     val withRepeats: Boolean = false,
-    val result: String = ""
+    val result: String = "0",
+    val resultError: String = ""
 )

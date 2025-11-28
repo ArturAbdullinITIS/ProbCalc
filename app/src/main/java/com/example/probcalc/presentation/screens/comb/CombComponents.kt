@@ -1,35 +1,29 @@
 package com.example.probcalc.presentation.screens.comb
 
-import android.R.attr.enabled
-import android.R.attr.text
-import android.R.attr.type
-import android.icu.text.CaseMap
-import android.icu.util.IslamicCalendar
-import android.widget.Button
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.probcalc.domain.model.CalcType
-
 
 @Composable
 fun InputNTextField(
@@ -40,13 +34,18 @@ fun InputNTextField(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { newValue ->
+            // Allow only digits
+            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                onValueChange(newValue)
+            }
+        },
         placeholder = { Text("Input n value") },
         singleLine = true,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
-
 
 @Composable
 fun InputKTextField(
@@ -57,22 +56,30 @@ fun InputKTextField(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { newValue ->
+            // Allow only digits
+            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                onValueChange(newValue)
+            }
+        },
         placeholder = { Text("Input k value") },
         singleLine = true,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
 
 @Composable
 fun CalculateButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
     Button(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        enabled = enabled
     ) {
         Text(text = "Calculate")
     }
@@ -96,8 +103,8 @@ fun CustomDropDownPanel(
             modifier = modifier
                 .fillMaxWidth()
                 .menuAnchor(),
-            value = selected.name,
-            onValueChange = {  },
+            value = getCalcTypeDisplayName(selected),
+            onValueChange = { },
             readOnly = true,
             singleLine = true,
             shape = RoundedCornerShape(20.dp),
@@ -109,12 +116,12 @@ fun CustomDropDownPanel(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = {onExpandedChange(false)}
+            onDismissRequest = { onExpandedChange(false) }
         ) {
             CalcType.entries.forEach { type ->
                 DropdownMenuItem(
                     text = {
-                        Text(type.name)
+                        Text(getCalcTypeDisplayName(type))
                     },
                     onClick = {
                         onSelect(type)
@@ -126,6 +133,14 @@ fun CustomDropDownPanel(
     }
 }
 
+@Composable
+private fun getCalcTypeDisplayName(type: CalcType): String {
+    return when (type) {
+        CalcType.PLACEMENT -> "Placement"
+        CalcType.PERMUTATION -> "Permutation"
+        CalcType.COMBINATION -> "Combination"
+    }
+}
 
 @Composable
 fun WithRepeats(
@@ -145,8 +160,6 @@ fun WithRepeats(
             text = "With repeats"
         )
     }
-
-
 }
 
 @Composable
@@ -181,7 +194,8 @@ fun ResultTitle(
 @Composable
 fun Result(
     modifier: Modifier = Modifier,
-    value: String
+    value: String,
+    isError: Boolean = false
 ) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
@@ -189,9 +203,15 @@ fun Result(
         onValueChange = { },
         singleLine = true,
         readOnly = true,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    text = "Error",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
     )
 }
-
-
-

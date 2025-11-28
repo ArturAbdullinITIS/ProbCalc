@@ -80,5 +80,6 @@ data class ProbScreenState(
     val m: String = "",
     val r: String = "",
     val allMarked: Boolean = false,
-    val result: String = ""
+    val result: String = "0",
+    val resultError: String = ""
 )

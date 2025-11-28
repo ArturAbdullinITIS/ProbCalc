@@ -27,6 +27,11 @@ private fun ProbScreenContent(
 ) {
     val viewModel: ProbScreenViewModel = hiltViewModel()
     val currentState by viewModel.state.collectAsState()
+    val isErrorResult = currentState.result.startsWith("Error") ||
+            currentState.result.startsWith("Please enter") ||
+            currentState.result.contains("cannot") ||
+            currentState.result.contains("must be") ||
+            currentState.result == "Calculation error"
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -91,7 +96,8 @@ private fun ProbScreenContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Result(
-                value = currentState.result
+                value = currentState.result,
+                isError = isErrorResult
             )
 
         }
