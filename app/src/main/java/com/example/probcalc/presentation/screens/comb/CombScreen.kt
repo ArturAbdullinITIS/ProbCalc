@@ -34,82 +34,76 @@ private fun CombScreenContent(
     val currentState by viewModel.state.collectAsState()
     var expanded by remember { mutableStateOf(false) }
 
-    Scaffold(
-        modifier = modifier,
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .imePadding()
+            .navigationBarsPadding()
+            .fillMaxSize()
+    ) {
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
-                .imePadding()
-                .navigationBarsPadding()
-                .fillMaxSize()
+            modifier = Modifier.weight(1f)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Title(
-                    modifier = modifier,
-                    value = "Combinatorics"
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                CustomDropDownPanel(
-                    modifier = modifier,
-                    selected = currentState.type,
-                    onSelect = {
-                        viewModel.processCommand(CombScreenCommands.ChangeType(it))
-                    },
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                InputNTextField(
-                    modifier = modifier,
-                    value = currentState.n,
-                    onValueChange = {
-                        viewModel.processCommand(CombScreenCommands.InputN(it))
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                InputKTextField(
-                    modifier = modifier,
-                    value = currentState.k,
-                    onValueChange = {
-                        viewModel.processCommand(CombScreenCommands.InputK(it))
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                WithRepeats(
-                    modifier = modifier,
-                    onCheckedChange = {
-                        viewModel.processCommand(CombScreenCommands.ChangeWithRepeats(it))
-                    },
-                    checked = currentState.withRepeats
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            Title(
+                modifier = modifier,
+                value = "Combinatorics"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            CustomDropDownPanel(
+                modifier = modifier,
+                selected = currentState.type,
+                onSelect = {
+                    viewModel.processCommand(CombScreenCommands.ChangeType(it))
+                },
+                expanded = expanded,
+                onExpandedChange = { expanded = it }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            InputNTextField(
+                modifier = modifier,
+                value = currentState.n,
+                onValueChange = {
+                    viewModel.processCommand(CombScreenCommands.InputN(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            InputKTextField(
+                modifier = modifier,
+                value = currentState.k,
+                onValueChange = {
+                    viewModel.processCommand(CombScreenCommands.InputK(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            WithRepeats(
+                modifier = modifier,
+                onCheckedChange = {
+                    viewModel.processCommand(CombScreenCommands.ChangeWithRepeats(it))
+                },
+                checked = currentState.withRepeats
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-                ResultTitle(
-                    value = "Result"
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            ResultTitle(
+                value = "Result"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-                Result(
-                    value = currentState.result
-                )
-                
-            }
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                CalculateButton(
-                    modifier = modifier,
-                    onClick = {
-                        viewModel.processCommand(CombScreenCommands.Calculate)
-                    }
-                )
-            }
-            
+            Result(
+                value = currentState.result
+            )
+
         }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            CalculateButton(
+                modifier = modifier,
+                onClick = {
+                    viewModel.processCommand(CombScreenCommands.Calculate)
+                }
+            )
+        }
+
     }
 }
