@@ -34,7 +34,7 @@ class CalculateProbUseCase @Inject constructor(
                 return resourceProvider.getString(R.string.m_cannot_be_greater_than_n)
             }
 
-            val result = if (!state.allMarked) {
+            val result = if (state.allMarked) {
                 // Case a) Все извлеченные предметы меченые
                 // P(A) = C(m, k) / C(n, k)
                 if (k > m) {

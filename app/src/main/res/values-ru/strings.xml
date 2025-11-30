@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ProbCalc</string>
+    <string name="app_name">ProCalc</string>
+    <string name="title_activity_main">ProCalc</string>
     <string name="please_enter_valid_numbers">Пожалуйста введите корректные значения</string>
     <string name="numbers_must_be_non_negative">Числа не должны быть отрицательными</string>
     <string name="for_permutations_with_repeats_k_must_equal_n">k должо быть равно n</string>

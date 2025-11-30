@@ -73,7 +73,7 @@ private fun ProbScreenContent(
                 }
             )
             Spacer(modifier = Modifier.height(8.dp))
-            if(currentState.allMarked) {
+            if(!currentState.allMarked) {
                 InputRTextField(
                     modifier = modifier,
                     value = currentState.r,
