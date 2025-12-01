@@ -36,28 +36,33 @@ class CombScreenViewModel @Inject constructor(
                     )
                 }
             }
-            CombScreenCommands.Calculate -> {
-
+            is CombScreenCommands.InputCounts -> {
                 _state.update { state ->
                     state.copy(
-                        result = calculateCombUseCase(
-                            state
-                        )
+                        counts = command.counts
+                    )
+                }
+            }
+            CombScreenCommands.Calculate -> {
+                _state.update { state ->
+                    state.copy(
+                        result = calculateCombUseCase(state)
                     )
                 }
             }
             is CombScreenCommands.ChangeType -> {
                 _state.update { state ->
                     state.copy(
-                        type = command.type
+                        type = command.type,
+                        result = "0"
                     )
                 }
             }
-
             is CombScreenCommands.ChangeWithRepeats -> {
                 _state.update { state ->
                     state.copy(
-                        withRepeats = command.withRepeats
+                        withRepeats = command.withRepeats,
+                        result = "0"
                     )
                 }
             }
@@ -70,10 +75,10 @@ class CombScreenViewModel @Inject constructor(
 sealed interface CombScreenCommands {
     data class InputN(val n: String): CombScreenCommands
     data class InputK(val k: String): CombScreenCommands
+    data class InputCounts(val counts: String): CombScreenCommands
     data class ChangeType(val type: CalcType): CombScreenCommands
     data class ChangeWithRepeats(val withRepeats: Boolean): CombScreenCommands
     data object Calculate: CombScreenCommands
-
 }
 
 
@@ -83,5 +88,6 @@ data class CombScreenState(
     val type: CalcType = CalcType.PLACEMENT,
     val withRepeats: Boolean = false,
     val result: String = "0",
-    val resultError: String = ""
+    val resultError: String = "",
+    val counts: String = ""
 )

@@ -15,7 +15,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -138,7 +137,7 @@ fun CustomDropDownPanel(
 @Composable
 private fun getCalcTypeDisplayName(type: CalcType): String {
     return when (type) {
-        CalcType.PLACEMENT -> stringResource(R.string.placement)
+        CalcType.PLACEMENT -> stringResource(R.string.arrangement)
         CalcType.PERMUTATION -> stringResource(R.string.permutation)
         CalcType.COMBINATION -> stringResource(R.string.combination)
     }
@@ -190,6 +189,31 @@ fun ResultTitle(
         text = value,
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+fun InputCountsTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text("Количества групп (n₁, n₂, ..., nₖ)") },
+        placeholder = { Text("Например: 2,3,1 или 2 3 1") },
+        singleLine = true,
+        shape = RoundedCornerShape(20.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+        supportingText = {
+            Text(
+                text = "Введите количества через пробел. Сумма должна равняться n",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     )
 }
 

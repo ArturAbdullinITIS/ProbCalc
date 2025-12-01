@@ -31,4 +31,7 @@
     <string name="input_r_value">Input r value</string>
     <string name="all_marked_items">All marked items</string>
     <string name="probability_screen">Probability</string>
+    <string name="calculation_error_overflow">Error overflow\n</string>
+    <string name="calculation_error">Calc error\n</string>
+    <string name="arrangement">Arrangement</string>
 </resources>

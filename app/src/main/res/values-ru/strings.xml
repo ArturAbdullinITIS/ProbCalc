@@ -31,4 +31,5 @@
     <string name="input_r_value">Введите r</string>
     <string name="all_marked_items">Все помечены</string>
     <string name="probability_screen">Вероятность</string>
+    <string name="arrangement">Размещение</string>
 </resources>

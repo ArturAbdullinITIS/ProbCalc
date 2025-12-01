@@ -12,17 +12,16 @@ class CalculateProbUseCase @Inject constructor(
 
     operator fun invoke(state: ProbScreenState): String {
         return try {
+            // Валидация основных параметров
             val n = state.n.toIntOrNull()
-            val k = state.k.toIntOrNull()
             val m = state.m.toIntOrNull()
-            val r = state.r.toIntOrNull()
+            val k = state.k.toIntOrNull()
 
-            // Basic validation
-            if (n == null || k == null || m == null) {
+            if (n == null || m == null || k == null) {
                 return resourceProvider.getString(R.string.please_enter_valid_numbers)
             }
 
-            if (n < 0 || k < 0 || m < 0) {
+            if (n < 0 || m < 0 || k < 0) {
                 return resourceProvider.getString(R.string.numbers_must_be_non_negative)
             }
 
@@ -35,44 +34,69 @@ class CalculateProbUseCase @Inject constructor(
             }
 
             val result = if (state.allMarked) {
-                // Case a) Все извлеченные предметы меченые
-                // P(A) = C(m, k) / C(n, k)
-                if (k > m) {
-                    return resourceProvider.getString(R.string.k_cannot_be_greater_than_m_when_all_marked)
-                }
-                val numerator = MathUtils.combinations(m, k)
-                val denominator = MathUtils.combinations(n, k)
-                numerator / denominator
+                // Случай a) Все извлеченные предметы меченые
+                calculateAllMarkedProbability(n, m, k)
             } else {
-                // Case b) Среди извлеченных r меченых
-                // P(A) = C(m, r) * C(n - m, k - r) / C(n, k)
-                if (r == null) {
-                    return resourceProvider.getString(R.string.please_enter_r_value)
-                }
-                if (r < 0) {
-                    return resourceProvider.getString(R.string.r_must_be_non_negative)
-                }
-                if (r > m) {
-                    return resourceProvider.getString(R.string.r_cannot_be_greater_than_m)
-                }
-                if (r > k) {
-                    return resourceProvider.getString(R.string.r_cannot_be_greater_than_k)
-                }
-                if (k - r > n - m) {
-                    return resourceProvider.getString(R.string.k_r_cannot_be_greater_than_n_m)
-                }
-
-                val numerator = MathUtils.combinations(m, r) * MathUtils.combinations(n - m, k - r)
-                val denominator = MathUtils.combinations(n, k)
-                numerator / denominator
+                // Случай b) Среди извлеченных ровно r меченых
+                calculateExactlyRMarkedProbability(n, m, k, state)
             }
 
             formatProbability(result)
         } catch (e: IllegalArgumentException) {
             "Error: ${e.message}"
+        } catch (e: ArithmeticException) {
+            resourceProvider.getString(R.string.calculation_error_overflow)
         } catch (e: Exception) {
-            "Calculation error"
+            resourceProvider.getString(R.string.calculation_error)
         }
+    }
+
+    private fun calculateAllMarkedProbability(n: Int, m: Int, k: Int): Double {
+        // P(A) = C(m, k) / C(n, k)
+        if (k > m) {
+            throw IllegalArgumentException(
+                resourceProvider.getString(R.string.k_cannot_be_greater_than_m_when_all_marked)
+            )
+        }
+
+        return MathUtils.probabilityAllMarked(n, m, k)
+    }
+
+    private fun calculateExactlyRMarkedProbability(n: Int, m: Int, k: Int, state: ProbScreenState): Double {
+        // P(A) = C(m, r) * C(n - m, k - r) / C(n, k)
+        val r = state.r.toIntOrNull()
+
+        if (r == null) {
+            throw IllegalArgumentException(
+                resourceProvider.getString(R.string.please_enter_r_value)
+            )
+        }
+
+        if (r < 0) {
+            throw IllegalArgumentException(
+                resourceProvider.getString(R.string.r_must_be_non_negative)
+            )
+        }
+
+        if (r > m) {
+            throw IllegalArgumentException(
+                resourceProvider.getString(R.string.r_cannot_be_greater_than_m)
+            )
+        }
+
+        if (r > k) {
+            throw IllegalArgumentException(
+                resourceProvider.getString(R.string.r_cannot_be_greater_than_k)
+            )
+        }
+
+        if (k - r > n - m) {
+            throw IllegalArgumentException(
+                resourceProvider.getString(R.string.k_r_cannot_be_greater_than_n_m)
+            )
+        }
+
+        return MathUtils.probabilityExactlyRMarked(n, m, k, r)
     }
 
     private fun formatProbability(probability: Double): String {
@@ -82,7 +106,9 @@ class CalculateProbUseCase @Inject constructor(
             probability == 0.0 -> "0"
             probability == 1.0 -> "1"
             probability < 0.0001 -> String.format("%.2e", probability)
-            else -> String.format("%.6f", probability)
+            probability < 0.001 -> String.format("%.6f", probability)
+            probability < 0.01 -> String.format("%.5f", probability)
+            else -> String.format("%.4f", probability)
         }
     }
 }
